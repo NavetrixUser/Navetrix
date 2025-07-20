@@ -4,9 +4,13 @@ import Image from "next/image";
 import { services } from "./servicesData";
 import Button from "./components/Button";
 import Card from "./components/Card";
-
-import HeroSlider from "./components/HeroSlider";
+import dynamic from "next/dynamic";
 import { openContactModal } from "./components/utils";
+import BlogMenuSection from "./blog/BlogMenuSection";
+import SafeRender from "./blog/SafeRender";
+import { usePathname } from "next/navigation";
+
+const HeroSlider = dynamic(() => import("./components/HeroSlider"), { ssr: false });
 
 export const metadata = {
   title: "Navetrix Technologies | Software Development, Training & Internships",
@@ -93,8 +97,8 @@ export default function Home() {
     url: "https://navetrix.com",
     logo: "https://navetrix.com/navetrix_logo.jpg",
     sameAs: [
-      "https://www.linkedin.com/company/navetrixtechnologies",
-      "https://www.instagram.com/navetrixtechnologies"
+      "https://www.linkedin.com/company/navetrix",
+      "https://twitter.com/navetrix"
     ],
     contactPoint: [{
       "@type": "ContactPoint",
@@ -140,6 +144,8 @@ export default function Home() {
   // Navigation
   const prev = () => setSlide(s => (s - 1 + total) % total);
   const next = () => setSlide(s => (s + 1) % total);
+
+  const pathname = usePathname();
 
   return (
     <>
@@ -227,8 +233,8 @@ export default function Home() {
                   </ul>
                 </div>
                 <div className="flex gap-2 mt-2">
-                  <span className="inline-block bg-[#00695C] text-white font-bold px-3 py-1 rounded-full text-xs">Remote & Onsite</span>
-                  <span className="inline-block bg-[#6D5BFF] text-white font-bold px-3 py-1 rounded-full text-xs">Global Reach</span>
+                  <span className="inline-block bg-[#00C9A7]/10 text-[#00C9A7] font-bold px-3 py-1 rounded-full text-xs">Remote & Onsite</span>
+                  <span className="inline-block bg-[#6D5BFF]/10 text-[#6D5BFF] font-bold px-3 py-1 rounded-full text-xs">Global Reach</span>
                 </div>
               </Card>
               {/* Why Choose Navetrix? */}
@@ -249,7 +255,7 @@ export default function Home() {
                     Thrive in a supportive environment that values diversity and prepares you for the future of work.
                   </p>
                 </div>
-                <span className="inline-block bg-[#1B1F3B] text-white font-bold px-3 py-1 rounded-full text-xs mt-2">Trusted by 1000+ learners</span>
+                <span className="inline-block bg-[#1B1F3B]/10 text-[#1B1F3B] font-bold px-3 py-1 rounded-full text-xs mt-2">Trusted by 1000+ learners</span>
               </Card>
             </div>
           </div>
@@ -301,11 +307,11 @@ export default function Home() {
         {/* Testimonials Section */}
         <section id="testimonials" className="w-full min-h-[40vh] flex items-center justify-center scroll-mt-20">
           <div className="w-full max-w-5xl mx-auto flex flex-col justify-center py-4 snap-start mt-0">
-            <h2 className="text-xl xs:text-2xl md:text-3xl font-bold mb-4 text-center text-gray-900">Testimonials</h2>
+            <h2 className="text-xl xs:text-2xl md:text-3xl font-bold mb-4 text-center text-gray-900 whitespace-nowrap overflow-x-auto">Testimonials</h2>
             {/* Modern Carousel/Slideshow */}
             <div className="relative w-full flex flex-col items-center">
               {mounted && (
-                <div className="flex gap-6 w-full justify-center items-stretch overflow-x-auto md:overflow-x-visible">
+                <div className="flex gap-6 w-full justify-center items-stretch">
                   {testimonials.length > 0 && Array.from({ length: getSlidesToShow() }).map((_, i) => {
                     const t = testimonials[(slide + i) % testimonials.length];
                     return (
@@ -325,11 +331,11 @@ export default function Home() {
                 </div>
               )}
               <div className="flex gap-2 mt-6 justify-center">
-                <button onClick={prev} className="w-10 h-10 rounded-full bg-[#00695C] text-white flex items-center justify-center shadow hover:bg-[#1B1F3B] transition">
+                <button onClick={prev} className="w-10 h-10 rounded-full bg-[#00C9A7] text-white flex items-center justify-center shadow hover:bg-[#1B1F3B] transition">
                   <span className="sr-only">Previous</span>
                   <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
                 </button>
-                <button onClick={next} className="w-10 h-10 rounded-full bg-[#00695C] text-white flex items-center justify-center shadow hover:bg-[#1B1F3B] transition">
+                <button onClick={next} className="w-10 h-10 rounded-full bg-[#00C9A7] text-white flex items-center justify-center shadow hover:bg-[#1B1F3B] transition">
                   <span className="sr-only">Next</span>
                   <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
                 </button>
@@ -337,6 +343,13 @@ export default function Home() {
             </div>
           </div>
         </section>
+        {/* Blog Menu Section (only on /blog routes) */}
+        {pathname && pathname.startsWith("/blog") && (
+          <SafeRender>
+            <BlogMenuSection />
+          </SafeRender>
+        )}
+        {/* Contact Section would go here */}
       </main>
     </>
   );

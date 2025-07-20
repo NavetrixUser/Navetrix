@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { openContactModal } from "./utils";
-import { AnimatePresence, motion } from "framer-motion";
 
 const images = [
     "/images/hero/slide1.avif",
@@ -23,6 +22,19 @@ const paragraph =
     "We empower growth through real-world internships, expert-led training, and custom software solutions for businesses and individuals.";
 
 export default function HeroSlider() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [AnimatePresence, setAnimatePresence] = useState<any>(null);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [MotionImg, setMotionImg] = useState<any>(null);
+
+    useEffect(() => {
+        // Dynamically import framer-motion only on client
+        import("framer-motion").then(mod => {
+            setAnimatePresence(() => mod.AnimatePresence);
+            setMotionImg(() => mod.motion.img);
+        });
+    }, []);
+
     const [index, setIndex] = useState(0);
 
     useEffect(() => {
@@ -32,13 +44,15 @@ export default function HeroSlider() {
         return () => clearInterval(interval);
     }, []);
 
+    if (!MotionImg || !AnimatePresence) return null;
+
     return (
         <section
             className="w-screen min-h-[95vh] min-h-[100svh] h-auto flex items-stretch justify-stretch overflow-hidden z-0 relative"
             style={{ minHeight: '100svh', height: 'auto' }}
         >
             <AnimatePresence initial={false}>
-                <motion.img
+                <MotionImg
                     key={images[index]}
                     src={images[index]}
                     alt="Navetrix Hero Slide"
@@ -63,7 +77,7 @@ export default function HeroSlider() {
                 <div className="flex flex-col sm:flex-row gap-4 justify-center w-full max-w-2xl mx-auto">
                     <button
                         type="button"
-                        className="bg-[#00695C] hover:bg-[#004D40] text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all text-lg min-w-[180px] block text-center focus:outline-none focus:ring-2 focus:ring-[#00C9A7] focus:ring-offset-2"
+                        className="bg-[#00897B] hover:bg-[#00695C] text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all text-lg min-w-[180px] block text-center focus:outline-none focus:ring-2 focus:ring-[#00C9A7] focus:ring-offset-2"
                         onClick={openContactModal}
                         aria-label="Start Your Journey with Navetrix"
                     >

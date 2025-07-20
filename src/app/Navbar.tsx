@@ -10,6 +10,7 @@ const NAV_LINKS = [
   { label: "Overview", href: "/#overview" },
   { label: "Services", href: "/#services" },
   { label: "Testimonials", href: "/#testimonials" },
+  { label: "Blog", href: "/blog" }, // Blog menu item
   { label: "Contact", href: "#contact" },
 ];
 
@@ -63,11 +64,14 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    // Always set scrolled to true on service and policy pages
+    // Always set scrolled to true on service, policy, and blog pages
     if (
-      pathname.startsWith("/services") ||
-      pathname.startsWith("/privacy-policy") ||
-      pathname.startsWith("/cookie-policy")
+      pathname && (
+        pathname.startsWith("/services") ||
+        pathname.startsWith("/privacy-policy") ||
+        pathname.startsWith("/cookie-policy") ||
+        pathname.startsWith("/blog")
+      )
     ) {
       setScrolled(true);
       return;
@@ -186,3 +190,13 @@ export default function Navbar() {
     </>
   );
 }
+
+/*
+In your page.tsx, ensure each section has the correct scroll-margin-top for perfect alignment:
+
+<section id="overview" className="... scroll-mt-24 ...">
+<section id="services" className="... scroll-mt-24 ...">
+<section id="team" className="... scroll-mt-24 ...">
+<section id="testimonials" className="... scroll-mt-24 ...">
+<section id="contact" className="... scroll-mt-24 ...">
+*/
