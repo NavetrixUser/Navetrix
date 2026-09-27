@@ -18,6 +18,7 @@ export default function ContactModal({ open, onClose }: { open: boolean; onClose
 	const [loading, setLoading] = useState(false);
 	const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 	const [captchaError, setCaptchaError] = useState<string | null>(null);
+	const [captchaChecking, setCaptchaChecking] = useState(false);
 
 	const nameRef = useRef<HTMLInputElement>(null);
 	const emailRef = useRef<HTMLInputElement>(null);
@@ -53,6 +54,7 @@ export default function ContactModal({ open, onClose }: { open: boolean; onClose
 			setStatus(null);
 			setCaptchaToken(null);
 			setCaptchaError(null);
+			setCaptchaChecking(false);
 			if (hcaptchaRef.current) hcaptchaRef.current.resetCaptcha();
 		}
 	}, [open]);
@@ -148,28 +150,27 @@ export default function ContactModal({ open, onClose }: { open: boolean; onClose
 		setErrors(prev => ({ ...prev, [name]: validation[name] || "" }));
 	};
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		setCaptchaError(null);
-		if (!captchaToken) {
+	const submitForm = async (tokenToUse: string | null = captchaToken) => {
+		if (!tokenToUse) {
+			setCaptchaChecking(false);
 			setCaptchaError("Please complete the CAPTCHA.");
-			// Scroll to the captcha section if not filled
 			if (captchaSectionRef.current) {
 				captchaSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
 			}
 			return;
 		}
+
 		const validation: { [key: string]: string } = validate();
 		if (Object.keys(validation).length > 0) {
 			setErrors(validation);
 			setStatus("error");
-			// Focus the first invalid field
 			if (validation.name && nameRef.current) nameRef.current.focus();
 			else if (validation.email && emailRef.current) emailRef.current.focus();
 			else if (validation.phone && phoneRef.current) phoneRef.current.focus();
 			else if (validation.message && messageRef.current) messageRef.current.focus();
 			return;
 		}
+
 		setLoading(true);
 		setStatus(null);
 		try {
@@ -181,7 +182,7 @@ export default function ContactModal({ open, onClose }: { open: boolean; onClose
 					email: form.email,
 					phone: form.phone,
 					message: form.message,
-					hcaptchaToken: captchaToken,
+					hcaptchaToken: tokenToUse,
 				}),
 			});
 			if (res.ok) {
@@ -189,8 +190,8 @@ export default function ContactModal({ open, onClose }: { open: boolean; onClose
 				setForm({ name: "", email: "", phone: "", message: "" });
 				setTouched({ name: false, email: false, phone: false, message: false });
 				setCaptchaToken(null);
+				setCaptchaChecking(false);
 				if (hcaptchaRef.current) hcaptchaRef.current.resetCaptcha();
-				// Scroll modal content to top
 				if (modalRef.current) {
 					modalRef.current.scrollTop = 0;
 				}
@@ -198,7 +199,6 @@ export default function ContactModal({ open, onClose }: { open: boolean; onClose
 				const errorData = await res.json().catch(() => ({}));
 				console.error("Contact API error:", errorData.error || res.statusText);
 				setStatus("error");
-				// Scroll modal content to top
 				if (modalRef.current) {
 					modalRef.current.scrollTop = 0;
 				}
@@ -211,6 +211,38 @@ export default function ContactModal({ open, onClose }: { open: boolean; onClose
 			}
 		}
 		setLoading(false);
+	};
+
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		setCaptchaError(null);
+
+		const validation: { [key: string]: string } = validate();
+		if (Object.keys(validation).length > 0) {
+			setErrors(validation);
+			setStatus("error");
+			if (validation.name && nameRef.current) nameRef.current.focus();
+			else if (validation.email && emailRef.current) emailRef.current.focus();
+			else if (validation.phone && phoneRef.current) phoneRef.current.focus();
+			else if (validation.message && messageRef.current) messageRef.current.focus();
+			return;
+		}
+
+		if (!captchaToken) {
+			if (hcaptchaRef.current) {
+				setCaptchaChecking(true);
+				hcaptchaRef.current.execute();
+				return;
+			}
+			setCaptchaChecking(false);
+			setCaptchaError("Please complete the CAPTCHA.");
+			if (captchaSectionRef.current) {
+				captchaSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			}
+			return;
+		}
+
+		await submitForm(captchaToken);
 	};
 
 	// Move topRef to the modal content div
@@ -357,19 +389,19 @@ export default function ContactModal({ open, onClose }: { open: boolean; onClose
 							ref={hcaptchaRef}
 							id="hcaptcha-widget-container"
 							sitekey={HCAPTCHA_SITEKEY}
+							size="invisible"
 							onVerify={(token: string) => {
 								if (typeof token === 'string' && token.length > 0) {
 									setCaptchaToken(token);
-									setCaptchaError(null);
+									setCaptchaError(null);										setCaptchaChecking(false);									void submitForm(token);
 								} else {
 									setCaptchaError("CAPTCHA failed, please try again.");
 									setCaptchaToken(null);
-								}
+									setCaptchaChecking(false);										setCaptchaChecking(false);								}
 							}}
 							onExpire={() => {
 								setCaptchaToken(null);
-								setCaptchaError("CAPTCHA expired, please try again.");
-							}}
+								setCaptchaError("CAPTCHA expired, please try again.");									setCaptchaChecking(false);							}}
 							onError={() => {
 								setCaptchaError("CAPTCHA failed, please try again.");
 								setCaptchaToken(null);
@@ -380,6 +412,18 @@ export default function ContactModal({ open, onClose }: { open: boolean; onClose
 							<span className="text-sm text-gray-600 text-center">
 								The form isn&apos;t available right now. Please email <a href="mailto:info@navetrix.com" className="underline text-[#00695C]">info@navetrix.com</a>.
 							</span>
+						)}
+						{captchaChecking && (
+							<div
+								className="mt-1 inline-flex items-center gap-2 text-xs font-medium text-[#00695C] animate-[fadeIn_0.2s_ease-out]"
+								aria-live="polite"
+							>
+								<span
+									className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-[#00695C]/25 border-t-[#00695C]"
+									aria-hidden="true"
+								/>
+								Checking you&apos;re human...
+							</div>
 						)}
 						{captchaError && (
 							<span className="text-xs text-red-500 mt-1">{captchaError}</span>
