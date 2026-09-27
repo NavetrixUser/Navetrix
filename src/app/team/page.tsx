@@ -1,7 +1,7 @@
 
 export default function TeamPage() {
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-white to-gray-100 p-6">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-white to-gray-100 p-6">
       <section className="w-full max-w-2xl bg-white rounded-xl shadow-lg p-8 mt-12">
         <h1 className="text-3xl font-bold text-center mb-6 text-gray-900">Our Team</h1>
         <div className="flex flex-col md:flex-row gap-8 justify-center items-center">
@@ -19,6 +19,6 @@ export default function TeamPage() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

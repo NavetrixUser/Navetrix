@@ -15,7 +15,7 @@ export default function FloatingActions() {
       </button>
       {/* WhatsApp Icon: green background, white icon, green border */}
       <a
-        href="https://wa.me/911234567890" // Replace with your WhatsApp number
+        href="https://wa.me/919840192637"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="WhatsApp"

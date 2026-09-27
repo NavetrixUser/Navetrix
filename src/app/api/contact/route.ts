@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { ValidationError } from "yup";
+import { contactSchema } from "../../contact/yup";
 
 function sanitizeInput(input: string): string {
   return input
@@ -8,34 +10,57 @@ function sanitizeInput(input: string): string {
     .trim();
 }
 
+// The client validates with the same schema, but the endpoint must not trust it.
+const MAX_BODY_BYTES = 10 * 1024;
+const MAX_TOKEN_LENGTH = 4096;
+
 export async function POST(req: Request) {
-  const { name: rawName, email: rawEmail, subject: rawSubject, message: rawMessage, hcaptchaToken } = await req.json();
-  const name = sanitizeInput(rawName || "");
-  const email = sanitizeInput(rawEmail || "");
-  const subject = sanitizeInput(rawSubject || "");
-  const message = sanitizeInput(rawMessage || "");
-  const token = hcaptchaToken;
-
-  // Debug logs for troubleshooting
-  console.log("hcaptchaToken:", hcaptchaToken);
-  const hcaptchaSecret = process.env.HCAPTCHA_SECRET;
-  console.log("hcaptchaSecret:", hcaptchaSecret);
-
-  if (!name || !email || !subject || !message) {
-    return NextResponse.json({ error: "All fields are required." }, { status: 400 });
+  const raw = await req.text();
+  if (new TextEncoder().encode(raw).length > MAX_BODY_BYTES) {
+    return NextResponse.json({ error: "Request too large." }, { status: 413 });
   }
+  let body: unknown;
+  try {
+    body = JSON.parse(raw);
+  } catch {
+    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+  }
+  if (typeof body !== "object" || body === null || Array.isArray(body)) {
+    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+  }
+  const fields = body as Record<string, unknown>;
+  const str = (v: unknown) => (typeof v === "string" ? sanitizeInput(v) : "");
+
+  let name: string, email: string, phone: string, message: string;
+  try {
+    ({ name, email, phone, message } = await contactSchema.validate(
+      {
+        name: str(fields.name),
+        email: str(fields.email),
+        phone: str(fields.phone),
+        message: str(fields.message),
+      },
+      { abortEarly: true, stripUnknown: true }
+    ));
+  } catch (err) {
+    const msg = err instanceof ValidationError ? err.message : "Invalid request.";
+    return NextResponse.json({ error: msg }, { status: 400 });
+  }
+  const subject = `Contact Form Submission - ${name}`;
+
+  const token = typeof fields.hcaptchaToken === "string" ? fields.hcaptchaToken : "";
+  const hcaptchaSecret = process.env.HCAPTCHA_SECRET;
 
   // hCaptcha verification
-  if (!token || !hcaptchaSecret) {
+  if (!token || token.length > MAX_TOKEN_LENGTH || !hcaptchaSecret) {
     return NextResponse.json({ error: "CAPTCHA verification failed." }, { status: 400 });
   }
   const captchaRes = await fetch("https://hcaptcha.com/siteverify", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: `secret=${hcaptchaSecret}&response=${token}`,
+    body: new URLSearchParams({ secret: hcaptchaSecret, response: token }),
   });
   const captchaData = await captchaRes.json();
-  console.log("hCaptcha verification response:", captchaData);
   if (!captchaData.success) {
     return NextResponse.json({ error: "CAPTCHA verification failed." }, { status: 400 });
   }
@@ -62,7 +87,7 @@ export async function POST(req: Request) {
         to,
         subject:  subject,
         reply_to: email,
-        text: `Name: ${name}\nEmail: ${email}\n\n${message}`,
+        text: `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\n${message}`,
       }),
     });
     if (!res.ok) {

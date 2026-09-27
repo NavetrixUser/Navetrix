@@ -11,12 +11,8 @@ export default function CertificateVerifyPage() {
     setLoading(true);
     setResult(null);
     try {
-      const res = await fetch("/certificates.json");
-      const data = await res.json();
-      const found = (data as { id: string; name: string; program: string; date: string }[]).find(
-        (c) => c.id.toLowerCase() === certId.trim().toLowerCase()
-      );
-      setResult(found || false);
+      const res = await fetch(`/api/verify?id=${encodeURIComponent(certId.trim())}`);
+      setResult(res.ok ? await res.json() : false);
     } catch {
       setResult(false);
     }

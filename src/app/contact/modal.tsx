@@ -170,8 +170,8 @@ export default function ContactModal({ open, onClose }: { open: boolean; onClose
 				body: JSON.stringify({
 					name: form.name,
 					email: form.email,
-					subject: `Contact Form Submission - ${form.name}`,
-					message: `Phone: ${form.phone}\n${form.message}`,
+					phone: form.phone,
+					message: form.message,
 					hcaptchaToken: captchaToken,
 				}),
 			});
@@ -330,7 +330,7 @@ export default function ContactModal({ open, onClose }: { open: boolean; onClose
 							onChange={handleChange}
 							onBlur={handleBlur}
 							rows={4}
-							placeholder="I am interested in your internship program. Please share more details."
+							placeholder="Tell us briefly what you need help with, e.g. connecting Salesforce to our accounting system."
 							className={`rounded-lg border shadow-sm px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00C9A7] transition text-base resize-none ${errors.message && (touched.message || status === "error") ? 'border-red-400' : 'border-gray-300'}`}
 							aria-invalid={!!errors.message}
 							aria-describedby={errors.message ? "message-error" : undefined}

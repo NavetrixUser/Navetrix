@@ -3,9 +3,11 @@ import * as Yup from "yup";
 export const contactSchema = Yup.object({
   name: Yup.string()
     .required("Full Name is required.")
-    .min(5, "Full Name must be at least 5 characters."),
+    .min(5, "Full Name must be at least 5 characters.")
+    .max(100, "Full Name must be at most 100 characters."),
   email: Yup.string()
     .required("Email is required.")
+    .max(254, "Email must be at most 254 characters.")
     .email("Invalid email.")
     .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Email cannot contain spaces."),
   phone: Yup.string()

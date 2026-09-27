@@ -9,7 +9,7 @@ const NAV_LINKS = [
   { label: "Home", href: "/#hero" },
   { label: "Overview", href: "/#overview" },
   { label: "Services", href: "/#services" },
-  { label: "Testimonials", href: "/#testimonials" },
+  // { label: "Testimonials", href: "/#testimonials" }, // re-enable once real testimonials are added
   { label: "Contact", href: "#contact" },
 ];
 

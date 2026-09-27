@@ -1,20 +1,25 @@
+import Link from "next/link";
 import FooterQuickLinks from "./FooterQuickLinks";
+
+import { SERVICES } from "./services/content";
+
+const SERVICE_LINKS = SERVICES.map((s) => ({ href: `/services/${s.slug}`, label: s.name }));
 
 export default function Footer({ currentYear }: { currentYear: number }) {
   return (
     <footer className="w-full bg-[#1B1F3B] text-white px-4 sm:px-6 md:px-8 py-10 md:py-12 mt-8">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
         {/* About */}
         <div>
           <div className="flex items-center gap-2 mb-4">
             <div className="space-y-1 mb-4">
-              <h2 className="text-xl md:text-2xl font-extrabold uppercase tracking-tight drop-shadow-lg whitespace-nowrap">
+              <p className="text-xl md:text-2xl font-extrabold uppercase tracking-tight drop-shadow-lg whitespace-nowrap">
                 NAVETRIX <span className="font-light">Technologies</span>
-              </h2>
+              </p>
             </div>
           </div>
           <p className="text-gray-300 text-base leading-relaxed mb-6 drop-shadow">
-            Empowering freshers and businesses through real-world tech internships, expert-led training, and innovative software solutions.
+            IT consulting, Azure integration, software development and SEO for small and medium businesses in India and Australia.
           </p>
           <div className="flex items-center gap-2 text-gray-200 text-base font-semibold mb-2 mt-2">
             <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-[#00C9A7]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -23,6 +28,17 @@ export default function Footer({ currentYear }: { currentYear: number }) {
             <a href="mailto:info@navetrix.com" className="underline hover:text-[#00C9A7]">info@navetrix.com</a>
           </div>
         </div>
+        {/* Services */}
+        <nav aria-label="Services">
+          <div className="text-xl font-bold mb-4 text-white tracking-tight drop-shadow">Services</div>
+          <ul className="flex flex-col gap-3 text-base">
+            {SERVICE_LINKS.map((s) => (
+              <li key={s.href}>
+                <Link href={s.href} className="hover:text-[#00C9A7] transition-colors font-medium drop-shadow">{s.label}</Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
         {/* Quick Links */}
         <div>
           <div className="text-xl font-bold mb-4 text-white tracking-tight drop-shadow">Quick Links</div>
