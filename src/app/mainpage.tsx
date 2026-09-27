@@ -112,6 +112,7 @@ export default function Home() {
                     <li>Small and medium businesses without a large IT team</li>
                     <li>IT teams that need extra Azure or .NET help</li>
                     <li>Companies running older applications that need an upgrade</li>
+                    <li>Aviation and air charter operators</li>
                   </ul>
                   <div className="font-semibold text-[#6D5BFF] mb-1 mt-2">Professionals:</div>
                   <ul className="text-gray-700 list-disc list-inside space-y-1 mb-3">

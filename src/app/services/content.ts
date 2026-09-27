@@ -160,6 +160,7 @@ export const SERVICES: Service[] = [
         { title: "Workday to downstream systems", text: "A nightly Data Factory pipeline sends new starters and leavers from Workday to payroll and to Microsoft Entra ID for account set-up." },
         { title: "One reporting database", text: "Daily pipelines copy sales, stock and finance data from three systems into a single Azure SQL database that feeds Power BI reports." },
         { title: "Retiring a script server", text: "A set of Windows scheduled scripts is rebuilt as Azure Functions with logging and alerts, and the old server is switched off." },
+        { title: "Air charter quotes to invoices", text: "Quote requests from an air charter website go straight into the sales team's CRM instead of an inbox. When a flight is confirmed, the booking details are passed to the operations system and an invoice is raised in the accounting software." },
       ],
     },
     faqs: [
@@ -301,6 +302,7 @@ export const SERVICES: Service[] = [
         { title: "Missing from map results", text: "A physiotherapy clinic doesn't show up when people search nearby. We rebuild its Google Business Profile, add a page for each service and suburb, and clean up duplicate listings." },
         { title: "Pages Google isn't indexing", text: "An online store has hundreds of product pages missing from Google. We fix the sitemap, internal links and duplicate pages created by product filters." },
         { title: "Slow site, identical titles", text: "A services business has a site that loads slowly on phones, and every page has the same title. We fix page speed and write a unique title and description for each page." },
+        { title: "Air charter enquiries", text: "An air charter operator gets most of its work by phone and wants more quote requests from search. We build pages for its common routes and charter types, make empty-leg flights indexable and remove them from search once they expire, and track quote form submissions so it can see which pages bring in bookings." },
       ],
     },
     faqs: [
