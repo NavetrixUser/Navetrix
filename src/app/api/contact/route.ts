@@ -14,9 +14,38 @@ function sanitizeInput(input: string): string {
 const MAX_BODY_BYTES = 10 * 1024;
 const MAX_TOKEN_LENGTH = 4096;
 
+// Reads the body but stops as soon as it passes the limit, so an oversized
+// request is never fully buffered. Returns null when the limit is exceeded.
+async function readBodyWithLimit(req: Request, limit: number): Promise<string | null> {
+  const declared = Number(req.headers.get("content-length"));
+  if (Number.isFinite(declared) && declared > limit) return null;
+  if (!req.body) return "";
+
+  const reader = req.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > limit) {
+      await reader.cancel();
+      return null;
+    }
+    chunks.push(value);
+  }
+  const bytes = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return new TextDecoder().decode(bytes);
+}
+
 export async function POST(req: Request) {
-  const raw = await req.text();
-  if (new TextEncoder().encode(raw).length > MAX_BODY_BYTES) {
+  const raw = await readBodyWithLimit(req, MAX_BODY_BYTES);
+  if (raw === null) {
     return NextResponse.json({ error: "Request too large." }, { status: 413 });
   }
   let body: unknown;
@@ -55,13 +84,24 @@ export async function POST(req: Request) {
   if (!token || token.length > MAX_TOKEN_LENGTH || !hcaptchaSecret) {
     return NextResponse.json({ error: "CAPTCHA verification failed." }, { status: 400 });
   }
-  const captchaRes = await fetch("https://hcaptcha.com/siteverify", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({ secret: hcaptchaSecret, response: token }),
-  });
-  const captchaData = await captchaRes.json();
-  if (!captchaData.success) {
+  let captchaOk = false;
+  try {
+    const captchaRes = await fetch("https://hcaptcha.com/siteverify", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ secret: hcaptchaSecret, response: token }),
+    });
+    if (!captchaRes.ok) {
+      console.error("hCaptcha siteverify returned", captchaRes.status);
+      return NextResponse.json({ error: "Could not verify CAPTCHA. Please try again." }, { status: 502 });
+    }
+    const captchaData = await captchaRes.json();
+    captchaOk = captchaData?.success === true;
+  } catch (err) {
+    console.error("hCaptcha verification error:", err);
+    return NextResponse.json({ error: "Could not verify CAPTCHA. Please try again." }, { status: 502 });
+  }
+  if (!captchaOk) {
     return NextResponse.json({ error: "CAPTCHA verification failed." }, { status: 400 });
   }
 

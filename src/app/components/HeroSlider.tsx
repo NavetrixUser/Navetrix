@@ -17,11 +17,15 @@ const images = [
     // Add more images as needed
 ];
 
-const tagline = "Code. Consult. Catalyze.";
-const heading = "IT consulting, Azure integration and software development";
-const subheading = "For small and medium businesses in India and Australia.";
+const tagline = "Consult. Build. Support.";
+const heading = "Technology help for growing businesses, without a large IT team";
+// Carries the service keywords now that the heading speaks to business owners.
+const subheading =
+    "IT consulting, Azure integration, Power BI reporting and software development for small and medium businesses in India and Australia.";
 const paragraph =
-    "We connect your business systems on Azure, modernise older .NET and React applications, and help your website get found on Google.";
+    "We get your business systems sharing data, turn that data into reports you can trust, update older applications, and help your website get found on Google.";
+// Keep these factual; each one is stated on the service pages.
+const highlights = ["Fully online", "Written scope and quote before work starts", "NDA on request"];
 
 export default function HeroSlider() {
     const [index, setIndex] = useState(0);
@@ -35,6 +39,7 @@ export default function HeroSlider() {
 
     return (
         <section
+            id="hero"
             className="w-screen min-h-[95vh] min-h-[100svh] h-auto flex items-stretch justify-stretch overflow-hidden z-0 relative"
             style={{ minHeight: '100svh', height: 'auto' }}
         >
@@ -59,7 +64,7 @@ export default function HeroSlider() {
                 <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl font-extrabold text-white drop-shadow-lg mb-4 animate-fade-in leading-tight max-w-5xl">
                     {heading}
                 </h1>
-                <p className="text-lg xs:text-xl md:text-2xl font-semibold text-white mb-2 animate-fade-in delay-100">
+                <p className="text-lg xs:text-xl md:text-2xl font-semibold text-white mb-2 animate-fade-in delay-100 max-w-4xl mx-auto">
                     {subheading}
                 </p>
                 <p className="text-base sm:text-lg md:text-xl text-gray-200 mb-8 animate-fade-in delay-200 max-w-3xl mx-auto text-center">
@@ -74,9 +79,17 @@ export default function HeroSlider() {
                         Book a consultation
                     </button>
                     <Link href="/#services" scroll={true} className="bg-white hover:bg-gray-100 text-[#1B1F3B] font-bold py-3 px-6 rounded-lg shadow-lg transition-all text-lg border border-[#00C9A7] min-w-[180px] block text-center focus:outline-none focus:ring-2 focus:ring-[#00C9A7] focus:ring-offset-2">
-                        Explore Services
+                        Explore services
                     </Link>
                 </div>
+                <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-8 text-sm sm:text-base text-gray-200 animate-fade-in delay-200">
+                    {highlights.map((h) => (
+                        <li key={h} className="flex items-center gap-2">
+                            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00C9A7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7" /></svg>
+                            {h}
+                        </li>
+                    ))}
+                </ul>
             </div>
         </section>
     );

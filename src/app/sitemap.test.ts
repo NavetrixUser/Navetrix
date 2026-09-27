@@ -8,9 +8,7 @@ import sitemap, { SITEMAP_PATHS } from "./sitemap";
 
 const APP_DIR = __dirname;
 // Routes that intentionally stay out of the sitemap. Add to this list, with a reason, rather than skipping a page silently.
-const EXCLUDED: string[] = [
-  "/verify", // utility form with no indexable content
-];
+const EXCLUDED: string[] = [];
 
 /** Every URL path that a page.tsx under src/app produces, with [slug] expanded from SERVICES. */
 function pageRoutes(dir = APP_DIR, prefix = ""): string[] {

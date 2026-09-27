@@ -6,6 +6,10 @@ import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { createPortal } from "react-dom";
 import type { ValidationError } from 'yup';
 
+// Without a site key the hCaptcha widget never renders, and unmounting it then throws
+// (it resets a widget id that doesn't exist), which crashes the whole page.
+const HCAPTCHA_SITEKEY = process.env.NEXT_PUBLIC_HCAPTCHA_SITEKEY || '';
+
 export default function ContactModal({ open, onClose }: { open: boolean; onClose: () => void }) {
 	const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
 	const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -95,9 +99,11 @@ export default function ContactModal({ open, onClose }: { open: boolean; onClose
 
 	if (!open) return null;
 
-	const validate = async () => {
+	// Validates the values passed in, not `form`: state updates from setForm aren't visible until the next render.
+	// The schema has no async tests, so validating synchronously avoids out-of-order results while typing.
+	const validate = (values: typeof form = form) => {
 		try {
-			await contactSchema.validate(form, { abortEarly: false });
+			contactSchema.validateSync(values, { abortEarly: false });
 			return {};
 		} catch (err) {
 			const newErrors: { [key: string]: string } = {};
@@ -112,31 +118,34 @@ export default function ContactModal({ open, onClose }: { open: boolean; onClose
 		}
 	};
 
-	const handleChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+		const { name } = e.target;
 		let value = e.target.value;
-		if (e.target.name === 'email') {
+		if (name === 'email') {
 			value = value.replace(/\s+/g, ''); // Remove all spaces for email
 		} else {
 			value = value.trimStart(); // Prevent leading spaces for other fields
 		}
-		setForm({ ...form, [e.target.name]: value });
+		const next = { ...form, [name]: value };
+		setForm(next);
 		// Re-validate the field on change
-		const validation = await validate();
-		setErrors({ ...errors, [e.target.name]: validation[e.target.name] || "" });
+		const validation: { [key: string]: string } = validate(next);
+		setErrors(prev => ({ ...prev, [name]: validation[name] || "" }));
 	};
 
-	const handleBlur = async (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+	const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+		const { name } = e.target;
 		let value = e.target.value;
-		if (e.target.name === 'email') {
+		if (name === 'email') {
 			value = value.replace(/\s+/g, ''); // Remove all spaces for email
 		} else {
 			value = value.trim(); // Trim all spaces for other fields
 		}
-		setForm({ ...form, [e.target.name]: value });
-		setTouched({ ...touched, [e.target.name]: true });
-		// Optionally validate on blur
-		const validation = await validate();
-		setErrors({ ...errors, [e.target.name]: validation[e.target.name] || "" });
+		const next = { ...form, [name]: value };
+		setForm(next);
+		setTouched(prev => ({ ...prev, [name]: true }));
+		const validation: { [key: string]: string } = validate(next);
+		setErrors(prev => ({ ...prev, [name]: validation[name] || "" }));
 	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -150,7 +159,7 @@ export default function ContactModal({ open, onClose }: { open: boolean; onClose
 			}
 			return;
 		}
-		const validation = await validate();
+		const validation: { [key: string]: string } = validate();
 		if (Object.keys(validation).length > 0) {
 			setErrors(validation);
 			setStatus("error");
@@ -231,7 +240,7 @@ export default function ContactModal({ open, onClose }: { open: boolean; onClose
 				</button>
 				{/* Updated heading and subheading design */}
 				<h2 className="text-3xl sm:text-4xl font-extrabold mb-2 text-center text-[#1B1F3B] tracking-tight drop-shadow-lg">
-					Let’s Connect
+					Get in touch
 				</h2>
 				
 				{status === "success" && (
@@ -239,15 +248,16 @@ export default function ContactModal({ open, onClose }: { open: boolean; onClose
 						className="w-full text-green-600 bg-green-50 border border-green-200 rounded-lg text-center font-medium mb-4 py-2 animate-fade-in"
 						aria-live="polite"
 					>
-						Message sent successfully!
+						Thanks, we&apos;ve got your message and will reply by email.
 					</div>
 				)}
-				{status === "error" && Object.keys(errors).length === 0 && (
+				{/* errors keeps "" for fields that passed, so check for a real message, not for keys */}
+				{status === "error" && !Object.values(errors).some(Boolean) && (
 					<div
 						className="md:col-span-2 text-red-600 text-center font-medium mt-2 animate-fade-in"
 						aria-live="polite"
 					>
-						Could not send message. Please try again or email <a href="mailto:info@navetrix.com" className="underline text-[#00C9A7]">info@navetrix.com</a>.
+						Could not send message. Please try again or email <a href="mailto:info@navetrix.com" className="underline text-[#00695C]">info@navetrix.com</a>.
 					</div>
 				)}
 				<form onSubmit={handleSubmit} className="flex flex-col gap-1 sm:gap-4 mt-6 w-full">
@@ -260,7 +270,7 @@ export default function ContactModal({ open, onClose }: { open: boolean; onClose
 							value={form.name}
 							onChange={handleChange}
 							onBlur={handleBlur}
-							placeholder="Ada Lovelace"
+							placeholder="Jane Smith"
 							className={`rounded-lg border shadow-sm px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00C9A7] transition text-base ${errors.name && (touched.name || status === "error") ? 'border-red-400' : 'border-gray-300'}`}
 							autoComplete="off"
 							aria-invalid={!!errors.name}
@@ -281,7 +291,7 @@ export default function ContactModal({ open, onClose }: { open: boolean; onClose
 							value={form.email}
 							onChange={handleChange}
 							onBlur={handleBlur}
-							placeholder="ada@navetrix.dev"
+							placeholder="jane@yourcompany.com.au"
 							className={`rounded-lg border shadow-sm px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00C9A7] transition text-base ${errors.email && (touched.email || status === "error") ? 'border-red-400' : 'border-gray-300'}`}
 							autoComplete="off"
 							aria-invalid={!!errors.email}
@@ -309,7 +319,7 @@ export default function ContactModal({ open, onClose }: { open: boolean; onClose
 							value={form.phone}
 							onChange={handleChange}
 							onBlur={handleBlur}
-							placeholder="+91 9876543210"
+							placeholder="+61 4xx xxx xxx"
 							className={`rounded-lg border shadow-sm px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00C9A7] transition text-base ${errors.phone && (touched.phone || status === "error") ? 'border-red-400' : 'border-gray-300'}`}
 							autoComplete="off"
 							aria-invalid={!!errors.phone}
@@ -342,10 +352,11 @@ export default function ContactModal({ open, onClose }: { open: boolean; onClose
 						</span>
 					</div>
 					<div ref={captchaSectionRef} className="flex flex-col items-center w-full mt-1 min-h-[80px]">
+						{HCAPTCHA_SITEKEY ? (
 						<HCaptcha
 							ref={hcaptchaRef}
 							id="hcaptcha-widget-container"
-							sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITEKEY || ''}
+							sitekey={HCAPTCHA_SITEKEY}
 							onVerify={(token: string) => {
 								if (typeof token === 'string' && token.length > 0) {
 									setCaptchaToken(token);
@@ -365,6 +376,11 @@ export default function ContactModal({ open, onClose }: { open: boolean; onClose
 							}}
 							theme="light"
 						/>
+						) : (
+							<span className="text-sm text-gray-600 text-center">
+								The form isn&apos;t available right now. Please email <a href="mailto:info@navetrix.com" className="underline text-[#00695C]">info@navetrix.com</a>.
+							</span>
+						)}
 						{captchaError && (
 							<span className="text-xs text-red-500 mt-1">{captchaError}</span>
 						)}

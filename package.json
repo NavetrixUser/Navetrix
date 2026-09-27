@@ -9,6 +9,9 @@
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:visual:update": "playwright test --project=visual-desktop --project=visual-mobile --update-snapshots",
     "export": "next export"
   },
   "dependencies": {
@@ -16,7 +19,7 @@
     "clsx": "^2.1.1",
     "framer-motion": "^12.18.1",
     "gray-matter": "^4.0.3",
-    "next": "^15.3.4",
+    "next": "^15.5.26",
     "next-mdx-remote": "^5.0.0",
     "nodemailer": "^7.0.3",
     "react": "^19.0.0",
@@ -26,13 +29,15 @@
     "yup": "^1.6.1"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "eslint": "^9",
-    "eslint-config-next": "15.3.4",
+    "eslint-config-next": "^15.5.26",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^3.2.7"

@@ -96,11 +96,42 @@ describe("POST /api/contact – rejects bad input without sending mail", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
+  it("declared Content-Length over 10 KB → 413 without reading the body", async () => {
+    const req = new Request("http://localhost/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Content-Length": String(1024 * 1024) },
+      body: JSON.stringify(validBody),
+    });
+    expect((await POST(req)).status).toBe(413);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("streamed body with no Content-Length stops reading once it passes 10 KB", async () => {
+    let chunksPulled = 0;
+    const chunk = new TextEncoder().encode("x".repeat(1024));
+    const stream = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        chunksPulled++;
+        if (chunksPulled > 1000) controller.close();
+        else controller.enqueue(chunk);
+      },
+    });
+    const req = new Request("http://localhost/api/contact", {
+      method: "POST",
+      body: stream,
+      // @ts-expect-error - required by Node's fetch for streamed request bodies
+      duplex: "half",
+    });
+    expect((await POST(req)).status).toBe(413);
+    expect(chunksPulled).toBeLessThan(20);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it.each([
     ["bad email", { email: "not-an-email" }],
     ["email with spaces", { email: "a b@example.com" }],
     ["name over 100 chars", { name: "A".repeat(101) }],
-    ["name too short", { name: "Ab" }],
+    ["name too short", { name: "A" }],
     ["message over 500 chars", { message: "word ".repeat(120) }],
     ["one-word message", { message: "Helloooooooo" }],
     ["missing phone", { phone: undefined }],
@@ -142,6 +173,19 @@ describe("POST /api/contact – hCaptcha", () => {
     fetchMock.mockImplementation(async () => Response.json({ success: false }));
     const res = await post(validBody);
     expect(res.status).toBe(400);
+    expect(resendCalls()).toHaveLength(0);
+  });
+
+  it.each([
+    ["network error", async () => { throw new TypeError("fetch failed"); }],
+    ["HTML error page", async () => new Response("<html>Bad Gateway</html>", { status: 502 })],
+    ["200 with non-JSON body", async () => new Response("<html>oops</html>", { status: 200 })],
+  ])("hCaptcha %s → 502 JSON error, no email", async (_label, impl) => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    fetchMock.mockImplementation(impl);
+    const res = await post(validBody);
+    expect(res.status).toBe(502);
+    expect((await res.json()).error).toBeTruthy();
     expect(resendCalls()).toHaveLength(0);
   });
 

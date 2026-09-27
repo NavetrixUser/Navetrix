@@ -19,7 +19,7 @@ export default function Footer({ currentYear }: { currentYear: number }) {
             </div>
           </div>
           <p className="text-gray-300 text-base leading-relaxed mb-6 drop-shadow">
-            IT consulting, Azure integration, software development and SEO for small and medium businesses in India and Australia.
+            IT consulting, Azure integration, Power BI reporting, software development and SEO for small and medium businesses in India and Australia.
           </p>
           <div className="flex items-center gap-2 text-gray-200 text-base font-semibold mb-2 mt-2">
             <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-[#00C9A7]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -27,6 +27,7 @@ export default function Footer({ currentYear }: { currentYear: number }) {
             </svg>
             <a href="mailto:info@navetrix.com" className="underline hover:text-[#00C9A7]">info@navetrix.com</a>
           </div>
+          <p className="text-gray-300 text-sm mt-2">Mon to Fri, 9am to 5pm Sydney time</p>
         </div>
         {/* Services */}
         <nav aria-label="Services">

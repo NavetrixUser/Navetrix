@@ -9,13 +9,7 @@ export default function TeamPage() {
             <div className="w-24 h-24 bg-gradient-to-tr from-blue-400 to-green-300 rounded-full flex items-center justify-center text-3xl font-bold text-white mb-4">KR</div>
             <h2 className="text-xl font-semibold text-gray-800">Kalpana Reddy</h2>
             <p className="text-sm text-gray-500 mb-2">Founder & CEO</p>
-            <p className="text-center text-gray-600">Visionary leader driving Navetrix forward with innovation and passion for technology solutions.</p>
-          </div>
-          <div className="flex flex-col items-center bg-gray-50 rounded-lg p-6 shadow-md w-full md:w-1/2">
-            <div className="w-24 h-24 bg-gradient-to-tr from-purple-400 to-pink-300 rounded-full flex items-center justify-center text-3xl font-bold text-white mb-4">AL</div>
-            <h2 className="text-xl font-semibold text-gray-800">Alex Lehrer</h2>
-            <p className="text-sm text-gray-500 mb-2">Director</p>
-            <p className="text-center text-gray-600">Director at Navetrix, passionate about building strong teams and delivering exceptional client value.</p>
+            <p className="text-center text-gray-600">Founded Navetrix and runs the business day to day, from scoping to delivery on client projects.</p>
           </div>
         </div>
       </section>

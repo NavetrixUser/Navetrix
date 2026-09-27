@@ -82,14 +82,14 @@ export const SERVICES: Service[] = [
       { q: "Do you work with businesses outside India?", a: "Yes. We work online with clients in India and Australia and schedule calls to suit both time zones." },
       { q: "Do we need to be using Azure already?", a: "No. Some clients are planning their first move to the cloud; others already run on Azure and want a second opinion." },
       { q: "How much does consulting cost?", a: "It depends on the scope and how you want to work with us. There's no fixed price list; we'll send a quote after the first call." },
-      { q: "Can you also do the work you recommend?", a: "Yes. We handle Azure integration, application development and migration, and SEO ourselves. You're under no obligation to use us for the delivery." },
+      { q: "Can you also do the work you recommend?", a: "Yes. We handle Azure integration, data and reporting, application development and migration, and SEO ourselves. You're under no obligation to use us for the delivery." },
       { q: "What do you need from us to get started?", a: "A short description of the problem. For a review, we'll also need access to the relevant systems or documents. We're happy to sign an NDA first." },
     ],
   },
   {
     slug: "azure-integration",
     name: "Azure Integration",
-    cardDescription: "Connect SAP, Dynamics 365, Salesforce, Workday and other systems on Azure.",
+    cardDescription: "Get systems like SAP, Salesforce and your accounting software sharing data automatically.",
     metaTitle: "Azure Integration Services",
     metaDescription:
       "Azure integration for small and medium businesses: Logic Apps, Data Factory, Functions, API Management and Service Bus, connecting SAP, Dynamics 365, Salesforce and Workday.",
@@ -172,9 +172,81 @@ export const SERVICES: Service[] = [
     ],
   },
   {
+    slug: "data-reporting",
+    name: "Data & Reporting",
+    cardDescription: "Up-to-date Power BI reports, without the monthly spreadsheet work.",
+    metaTitle: "Power BI and Data Reporting Services",
+    metaDescription:
+      "Power BI dashboards and data reporting for small and medium businesses in India and Australia: reporting databases on Azure SQL, automated data pipelines and report clean-up.",
+    serviceType: "Business intelligence",
+    h1: "Power BI and data reporting services",
+    intro: [
+      "In many businesses, the monthly numbers come from someone exporting data from three systems, pasting it into a spreadsheet and fixing formulas until the totals look right. It takes days, and nobody is fully sure the figures are correct.",
+      "We set up reporting that updates itself. We bring data from your sales, finance, stock and HR systems into one place, clean it up, and build Power BI reports that owners and managers can open at any time. We work with small and medium businesses in India and Australia.",
+    ],
+    image: "/images/data-reporting.avif",
+    imageAlt: "Business dashboard with sales and finance charts",
+    sections: [
+      {
+        heading: "What we do",
+        items: [
+          { title: "Power BI reports and dashboards", text: "Reports for sales, finance, operations and stock, designed around the questions managers actually ask, not every field in the database." },
+          { title: "Reporting databases", text: "A single Azure SQL database, or a Microsoft Fabric workspace for larger volumes, that holds cleaned data from all your systems in one place." },
+          { title: "Automated data pipelines", text: "Scheduled Data Factory or Fabric pipelines that load new data every night or every hour, so nobody has to export and paste files." },
+          { title: "Data clean-up and definitions", text: "Agreeing what counts as a sale, a customer or a margin, and fixing duplicate and mismatched records so every report uses the same figures." },
+          { title: "Fixing existing reports", text: "Speeding up slow Power BI reports, fixing broken refreshes and tidying up data models that have grown out of control." },
+          { title: "Access and sharing", text: "Setting up workspaces, row-level security and sharing, so each person sees the data they're meant to see." },
+        ],
+      },
+      {
+        heading: "Data sources we work with",
+        items: [
+          { title: "Accounting and ERP", text: "Xero, MYOB, Tally, QuickBooks, Dynamics 365 and SAP." },
+          { title: "CRM and sales", text: "Salesforce, Dynamics 365, HubSpot and online stores such as Shopify." },
+          { title: "Databases and files", text: "SQL Server, Excel workbooks, CSV exports and SharePoint lists." },
+        ],
+      },
+    ],
+    process: {
+      heading: "How a reporting project runs",
+      steps: [
+        { title: "Questions first", text: "We start with the decisions you need to make and the numbers behind them, then work out which systems hold that data." },
+        { title: "Data review", text: "We look at the source data, note gaps and inconsistencies, and agree how key figures should be calculated." },
+        { title: "Build", text: "We set up the pipelines and reporting database, then build the first reports and review them with you against figures you already trust." },
+        { title: "Roll-out", text: "We publish the reports, set up access and scheduled refreshes, and show your team how to use and filter them." },
+      ],
+    },
+    engagement: {
+      heading: "Ways to work with us",
+      options: [
+        { title: "Fixed-scope reporting project", text: "A defined set of reports and the data pipelines behind them, with an agreed scope and quote." },
+        { title: "Report health check", text: "A review of your existing Power BI reports and data model, with a list of fixes for speed, accuracy and refresh failures." },
+        { title: "Ongoing reporting support", text: "A monthly arrangement for new reports, changes as your business changes, and keeping refreshes running." },
+      ],
+      note: "There's no fixed price list. Pricing depends on the number of data sources and reports, and we'll quote after the data review.",
+    },
+    examples: {
+      heading: "Typical projects",
+      intro: "Examples of the reporting work we take on:",
+      items: [
+        { title: "Month-end without spreadsheets", text: "A wholesaler's finance team spends the first week of each month building a sales and margin report in Excel. A nightly pipeline loads data from the online store and the accounting system into Azure SQL, and a Power BI report replaces the spreadsheet." },
+        { title: "Stock across locations", text: "A business with several warehouses can't see stock levels in one place. We combine data from each site into one report showing stock on hand, slow-moving items and reorder points." },
+        { title: "A report that takes minutes to open", text: "A Power BI report has grown to dozens of pages and times out on refresh. We rebuild the data model, remove unused tables and move heavy calculations into the database." },
+        { title: "Air charter utilisation", text: "An air charter operator wants to see revenue and hours flown for each aircraft without asking the operations team. We combine booking and invoice data into a report showing utilisation, revenue per flight hour and repeat customers." },
+      ],
+    },
+    faqs: [
+      { q: "Do we need Power BI licences?", a: "Usually, yes. People who publish or share reports need a Power BI Pro licence, which you buy from Microsoft. We'll tell you which licences you need before any work starts." },
+      { q: "Our data is messy. Can you still help?", a: "Yes. Most projects start with messy data. The data review stage finds the problems, and we fix them in the pipeline so the reports stay accurate." },
+      { q: "Do we need Azure?", a: "Not always. Smaller setups can connect Power BI directly to your systems. Once there are several sources or a lot of data, a reporting database on Azure is more reliable, and we'll recommend what fits." },
+      { q: "Can our team change the reports later?", a: "Yes. We hand over the reports and data model with documentation, and can train your staff to build and edit their own reports." },
+      { q: "Who can see the data?", a: "Only the people you give access to. We set up workspaces and row-level security so, for example, each branch manager sees only their own branch." },
+    ],
+  },
+  {
     slug: "development",
     name: "Development & Migration",
-    cardDescription: ".NET and React development, and upgrades of older applications.",
+    cardDescription: "New .NET and React applications, and upgrades for older ones that are hard to maintain.",
     metaTitle: ".NET and React Development and Migration",
     metaDescription:
       "Custom .NET and React development and migration of older applications: .NET Framework to modern .NET, legacy front ends to React, and on-premises apps to Azure.",
@@ -252,7 +324,7 @@ export const SERVICES: Service[] = [
   {
     slug: "seo",
     name: "SEO Services",
-    cardDescription: "Technical fixes, local SEO and content, on monthly, yearly or one-time plans.",
+    cardDescription: "Help your website show up on Google and bring in more enquiries.",
     metaTitle: "SEO Services for Small and Medium Businesses",
     metaDescription:
       "SEO for small and medium businesses in India and Australia: technical fixes, on-page optimisation, local SEO and monthly reporting, on one-time, monthly or yearly plans.",
@@ -311,77 +383,6 @@ export const SERVICES: Service[] = [
       { q: "Which website platforms do you work with?", a: "We work with most common platforms, including WordPress, Shopify, Wix and custom-built sites. Some platforms limit what can be changed, and we'll tell you where that applies." },
       { q: "What access do you need?", a: "For the audit, read access to Google Search Console and Google Analytics is enough. To make fixes, we'll need editor access to your website or its code." },
       { q: "What's the difference between the monthly and yearly plans?", a: "The work is the same. The yearly plan sets out a 12-month plan of priorities at the start, which suits businesses that want a longer-term commitment." },
-    ],
-  },
-  {
-    slug: "skill-building",
-    name: "IT Training",
-    cardDescription: "Online training in Azure, cloud, Python, SQL and AI.",
-    metaTitle: "IT Training in Azure, Cloud, Python, SQL and AI",
-    metaDescription:
-      "Practical online IT training in Azure, AWS, Google Cloud, Python, SQL, AI and cybersecurity for professionals, graduates and teams.",
-    serviceType: "IT training",
-    h1: "Skill-building training",
-    intro: [
-      "Our training is based on the same work we do for clients: cloud, data, integration and application development. Sessions are practical, with exercises based on real project situations rather than slides alone.",
-      "Training is delivered online, for individuals moving into cloud and data roles and for teams that need to get up to speed on a particular technology.",
-    ],
-    image: "/images/skill-building.avif",
-    imageAlt: "Hands-on IT skill-building training session",
-    sections: [
-      {
-        heading: "Topics we cover",
-        items: [
-          { title: "Microsoft Azure", text: "Fundamentals, Data Factory, Synapse, Functions, App Service, networking, identity and security." },
-          { title: "AWS", text: "EC2, S3, Lambda, IAM, VPC networking and RDS, plus monitoring and cost control." },
-          { title: "Google Cloud", text: "Compute Engine, Cloud Storage, BigQuery, IAM and networking." },
-          { title: "Python", text: "From the core language through to working with files, JSON and CSV, pandas, testing and automation." },
-          { title: "SQL", text: "Queries and joins through to window functions, stored procedures, indexing and performance tuning." },
-          { title: "AI and generative AI", text: "Machine learning basics, NLP, transformers and practical use of large language models." },
-          { title: "Cybersecurity", text: "Security fundamentals, cloud security, identity and access management, and incident response." },
-          { title: "Web development", text: "HTML, JavaScript and jQuery for people starting out in front-end work." },
-        ],
-      },
-      {
-        heading: "How training works",
-        items: [
-          { title: "Online sessions", text: "All training is delivered online, so you can join from anywhere." },
-          { title: "Hands-on exercises", text: "Each topic includes exercises and small case studies, not just theory." },
-          { title: "Interview preparation", text: "Courses include common interview questions for the topic, for people preparing for a new role." },
-        ],
-      },
-    ],
-    process: {
-      heading: "Getting started",
-      steps: [
-        { title: "Tell us your goal", text: "Let us know which topic you're interested in and your current experience." },
-        { title: "Choose a format", text: "We'll suggest the course or format that fits, for an individual or a team." },
-        { title: "Train", text: "Work through the sessions and exercises, with time to ask questions." },
-      ],
-    },
-    engagement: {
-      heading: "Training options",
-      options: [
-        { title: "Individual learners", text: "Join a course on a specific topic, such as Azure data engineering or Python." },
-        { title: "Team training", text: "A course adapted to your team's current level and the tools you use at work." },
-        { title: "One-to-one mentoring", text: "Focused sessions for someone preparing for a new role or working through a real project." },
-      ],
-      note: "Fees depend on the course and format. Contact us for current details.",
-    },
-    examples: {
-      heading: "Who our training suits",
-      intro: "Training is a good fit if, for example:",
-      items: [
-        { title: "Moving into cloud or data", text: "You work in IT support, testing or development and want to move into an Azure or data engineering role." },
-        { title: "A team adopting Azure", text: "Your company is moving to Azure and your developers or analysts need to learn Data Factory, Functions or Synapse." },
-        { title: "Getting interview-ready", text: "You have the basics in Python or SQL and want structured practice before technical interviews." },
-      ],
-    },
-    faqs: [
-      { q: "Do I need prior experience?", a: "It depends on the course. Python, SQL and web development start from the basics. The cloud and AI courses assume some familiarity with programming or IT." },
-      { q: "How is the training delivered?", a: "Online. Contact us for the current schedule and format of the course you're interested in." },
-      { q: "Can you run training for our team?", a: "Yes. We can adapt a course to your team's current level and the tools you already use." },
-      { q: "Can I focus on specific topics?", a: "Yes. Tell us what you need for your role or a current project, and we'll suggest which parts of a course to focus on." },
     ],
   },
 ];

@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Playwright builds into its own folder so it can't clash with a dev server or build using .next.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   images: {
     remotePatterns: [
       {
@@ -14,10 +16,21 @@ const nextConfig: NextConfig = {
   //output: "export", // Enable static export for cPanel deployment
   async redirects() {
     return [
-      // Internship programs were retired; send old links and search traffic to training.
+      // Internships, training and certificate verification were retired;
+      // send old links and search traffic to the home page.
       {
         source: "/services/internship-programs",
-        destination: "/services/skill-building",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/services/skill-building",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/verify",
+        destination: "/",
         permanent: true,
       },
     ];

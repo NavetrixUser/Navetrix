@@ -79,6 +79,13 @@ export function organizationJsonLd() {
         "@type": "ContactPoint",
         email: "info@navetrix.com",
         contactType: "customer support",
+        // Sydney local time (shown on the site in the footer and overview).
+        hoursAvailable: {
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          opens: "09:00",
+          closes: "17:00",
+        },
       },
     ],
   };

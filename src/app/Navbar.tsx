@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 
@@ -63,12 +62,9 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    // Always set scrolled to true on service and policy pages
-    if (
-      pathname.startsWith("/services") ||
-      pathname.startsWith("/privacy-policy") ||
-      pathname.startsWith("/cookie-policy")
-    ) {
+    // Only the home page has a dark hero behind the navbar; everywhere else the
+    // light transparent style would put pale text on a light background.
+    if (pathname !== "/") {
       setScrolled(true);
       return;
     }
@@ -91,18 +87,12 @@ export default function Navbar() {
         style={scrolled ? { WebkitBackdropFilter: "blur(8px)" } : {}}
       >
         <div className="container mx-auto flex items-center justify-between px-4">
-          {/* Logo or Text Logo depending on scroll/hero */}
-          {scrolled ? (
-            <Link href="/" className="flex items-center font-extrabold text-xl text-[#1B1F3B] tracking-tight">
-              <Image src="/navetrix_logo.jpg" alt="Navetrix Logo" width={120} height={40} style={{ width: 120, height: 'auto' }} className="h-10 w-auto mr-2" priority />
+          {/* One text logo; only its colour changes with the background */}
+          <div className="logo_col col-xs col-sm-fit">
+            <Link href="/" className={`text-logo font-extrabold text-2xl md:text-3xl transition-colors duration-300 ${scrolled ? "text-[#1B1F3B]" : "text-gray-200 drop-shadow-md"}`}>
+              NAVETRIX<span style={{ fontWeight: 300 }} className="span12"> TECHNOLOGIES</span>
             </Link>
-          ) : (
-            <div className="logo_col col-xs col-sm-fit">
-              <Link href="/" className="text-logo font-extrabold text-2xl md:text-3xl text-gray-200 drop-shadow-md">
-                NAVETRIX<span style={{ fontWeight: 300 }} className="span12"> TECHNOLOGIES</span>
-              </Link>
-            </div>
-          )}
+          </div>
           {/* Desktop Nav */}
           <ul className="hidden md:flex gap-6">
             {NAV_LINKS.map(link => {
