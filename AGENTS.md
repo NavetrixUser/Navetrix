@@ -43,6 +43,14 @@ This repo is the Navetrix marketing website, built with Next.js 15 App Router, R
 - For route-handler changes, prefer direct test coverage with `fetch` stubs rather than starting a full local server.
 - Do not rely on static export assumptions for any feature that requires a server, especially `/api/contact`.
 
+## Commit comments
+
+- Keep commit comments short, plain, and human. One line is preferred.
+- Write what changed, not a long narrative or AI-generated summary.
+- Prefer natural phrases like: `Fix contact form validation`, `Update service metadata`, `Improve homepage CTA copy`.
+- Keep comments concise, usually under 8-12 words, and avoid filler such as “implements”, “enhances”, “comprehensive”, or “optimized solution”.
+- Do not add long explanations, bullet lists, or marketing-style wording to commit comments.
+
 ## Notes
 
 - The project is optimized for Vercel deployment; server endpoints require server support.
